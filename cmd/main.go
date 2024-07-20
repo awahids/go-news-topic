@@ -3,11 +3,16 @@ package main
 import (
 	"log"
 	"net/http"
+	"news-topic-api/internal/db"
 	"news-topic-api/internal/routes"
 	"time"
 )
 
 func main() {
+	// init db
+	db.NewPostgresDB()
+
+	// init routes
 	r := routes.InitRoutes()
 
 	server := &http.Server{
