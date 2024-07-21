@@ -8,6 +8,8 @@ import (
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+
+	seeds "news-topic-api/internal/db/seeders"
 )
 
 func NewPostgresDB() (*gorm.DB, error) {
@@ -28,6 +30,8 @@ func NewPostgresDB() (*gorm.DB, error) {
 
 	log.Println("connected to postgres database")
 
+	// SeedDb(db)
+	seeds.SeedDb(db)
 	return db, nil
 }
 
