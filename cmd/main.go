@@ -10,10 +10,10 @@ import (
 
 func main() {
 	// init db
-	db.NewPostgresDB()
+	db, _ := db.NewPostgresDB()
 
 	// init routes
-	r := routes.InitRoutes()
+	r := routes.InitRoutes(db)
 
 	server := &http.Server{
 		Addr:           ":9000",

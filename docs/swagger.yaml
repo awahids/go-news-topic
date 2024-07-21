@@ -1,0 +1,234 @@
+definitions:
+  common.Meta:
+    properties:
+      pagination:
+        $ref: '#/definitions/common.MetaPage'
+    type: object
+  common.MetaPage:
+    properties:
+      current_page:
+        type: integer
+      from:
+        type: integer
+      last_page:
+        type: integer
+      per_page:
+        type: integer
+      to:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dtos.CreateTopicRequest:
+    properties:
+      title:
+        maxLength: 255
+        minLength: 3
+        type: string
+      value:
+        type: string
+    required:
+    - title
+    type: object
+  dtos.UpdateTopicRequest:
+    properties:
+      title:
+        type: string
+    type: object
+  response.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      meta:
+        $ref: '#/definitions/common.Meta'
+    type: object
+  response.TopicResponse:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      uuid:
+        type: string
+      value:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /topic:
+    post:
+      consumes:
+      - application/json
+      description: Create a new topic with the specified name
+      parameters:
+      - description: Create Topic Request
+        in: body
+        name: topic
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.CreateTopicRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.TopicResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Create a new topic
+      tags:
+      - Topics
+  /topic/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete topic
+      parameters:
+      - description: Topic UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Delete topic
+      tags:
+      - Topics
+    get:
+      description: Get topic by uuid
+      parameters:
+      - description: Topic UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TopicResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get topic by uuid
+      tags:
+      - Topics
+    put:
+      consumes:
+      - application/json
+      description: Update topic
+      parameters:
+      - description: Topic UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Update Topic Request
+        in: body
+        name: topic
+        required: true
+        schema:
+          $ref: '#/definitions/dtos.UpdateTopicRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TopicResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Update topic
+      tags:
+      - Topics
+  /topics:
+    get:
+      description: Get all topics with pagination
+      parameters:
+      - default: 5
+        description: Number of topics per page
+        in: query
+        name: per_page
+        type: integer
+      - default: 1
+        description: Current page number
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.TopicResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      summary: Get all topics
+      tags:
+      - Topics
+swagger: "2.0"
