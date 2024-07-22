@@ -28,6 +28,9 @@ func NewPostgresDB() (*gorm.DB, error) {
 
 	log.Println("connected to postgres database")
 
+	// Migrate the schema
+	// db.AutoMigrate(&entities.News{}, &entities.Topic{})
+
 	return db, nil
 }
 

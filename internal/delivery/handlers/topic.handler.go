@@ -27,7 +27,7 @@ func NewTopicHandler(topicUseCase usecase.TopicUseCase) *TopicHandler {
 // @Produce  json
 // @Param per_page query int false "Number of topics per page" default(5)
 // @Param page query int false "Current page number" default(1)
-// @Success 200 {array} response.TopicResponse
+// @Success 200 {array} response.Response
 // @Failure 400 {object} response.ErrorResponse "Bad Request"
 // @Failure 500 {object} response.ErrorResponse "Internal Server Error"
 // @Router /topics [get]
@@ -182,7 +182,7 @@ func (h *TopicHandler) UpdateTopic(w http.ResponseWriter, r *http.Request) {
 // @Accept  json
 // @Produce  json
 // @Param uuid path string true "Topic UUID"
-// @Success 200 {object} response.Response
+// @Success 200 {object} response.ErrorResponse "OK"
 // @Failure 400 {object} response.ErrorResponse "Bad Request"
 // @Failure 404 {object} response.ErrorResponse "Not Found"
 // @Failure 500 {object} response.ErrorResponse "Internal Server Error"

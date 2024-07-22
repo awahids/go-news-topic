@@ -189,7 +189,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/response.ErrorResponse"
                         }
                     },
                     "400": {
@@ -266,37 +266,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "common.Meta": {
-            "type": "object",
-            "properties": {
-                "pagination": {
-                    "$ref": "#/definitions/common.MetaPage"
-                }
-            }
-        },
-        "common.MetaPage": {
-            "type": "object",
-            "properties": {
-                "current_page": {
-                    "type": "integer"
-                },
-                "from": {
-                    "type": "integer"
-                },
-                "last_page": {
-                    "type": "integer"
-                },
-                "per_page": {
-                    "type": "integer"
-                },
-                "to": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "dtos.CreateTopicRequest": {
             "type": "object",
             "required": [
@@ -329,21 +298,6 @@ const docTemplate = `{
                 },
                 "message": {
                     "type": "string"
-                }
-            }
-        },
-        "response.Response": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "meta": {
-                    "$ref": "#/definitions/common.Meta"
                 }
             }
         },
