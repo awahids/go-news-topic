@@ -39,7 +39,10 @@ func InitRoutes(db *gorm.DB) *chi.Mux {
 		})
 
 		// topic
-		v1.Mount("/", TopicRouter(db))
+		v1.Mount("/topics", TopicRouter(db))
+
+		// news
+		v1.Mount("/news", NewsRouter(db))
 	})
 
 	return r

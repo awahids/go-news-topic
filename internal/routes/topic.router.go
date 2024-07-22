@@ -18,11 +18,14 @@ func TopicRouter(db *gorm.DB) chi.Router {
 	topicUc := usecase.NewTopicUseCase(topicRepo, validate)
 	handler := handlers.NewTopicHandler(topicUc)
 
-	r.Post("/topic", handler.CreateTopic)
-	r.Get("/topics", handler.GetTopics)
-	r.Get("/topic/{uuid}", handler.GetTopic)
-	r.Put("/topic/{uuid}", handler.UpdateTopic)
-	r.Delete("/topic/{uuid}", handler.DeleteTopic)
+	r.Post("/", handler.CreateTopic)
+	r.Get("/", handler.GetTopics)
+
+	r.Route("/{uuid}", func(r chi.Router) {
+		r.Get("/", handler.GetTopic)
+		r.Put("/", handler.UpdateTopic)
+		r.Delete("/", handler.DeleteTopic)
+	})
 
 	return r
 }
