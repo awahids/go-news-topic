@@ -1,4 +1,44 @@
 definitions:
+  common.Meta:
+    properties:
+      pagination:
+        $ref: "#/definitions/common.MetaPage"
+    type: object
+  common.MetaPage:
+    properties:
+      current_page:
+        type: integer
+      from:
+        type: integer
+      last_page:
+        type: integer
+      per_page:
+        type: integer
+      to:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dtos.CreateNewsRequest:
+    properties:
+      content:
+        type: string
+      status:
+        enum:
+          - published
+          - draft
+        type: string
+      title:
+        type: string
+      topics:
+        items:
+          $ref: "#/definitions/dtos.TopicUuid"
+        type: array
+    required:
+      - content
+      - status
+      - title
+    type: object
   dtos.CreateTopicRequest:
     properties:
       title:
@@ -9,6 +49,36 @@ definitions:
         type: string
     required:
       - title
+    type: object
+  dtos.TopicUuid:
+    properties:
+      uuid:
+        type: string
+    required:
+      - uuid
+    type: object
+  dtos.UpdateNewsRequest:
+    properties:
+      content:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      topics:
+        items:
+          $ref: "#/definitions/dtos.TopicUuid"
+        type: array
+    type: object
+  dtos.UpdateNewsStatus:
+    properties:
+      status:
+        enum:
+          - published
+          - draft
+        type: string
+    required:
+      - status
     type: object
   dtos.UpdateTopicRequest:
     properties:
@@ -21,6 +91,33 @@ definitions:
         type: integer
       message:
         type: string
+    type: object
+  response.NewsResponse:
+    properties:
+      content:
+        type: string
+      id:
+        type: integer
+      status:
+        type: string
+      title:
+        type: string
+      topics:
+        items:
+          $ref: "#/definitions/response.TopicResponse"
+        type: array
+      uuid:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      meta:
+        $ref: "#/definitions/common.Meta"
     type: object
   response.TopicResponse:
     properties:
@@ -39,6 +136,211 @@ info:
   title: News API
   version: "1.0.0"
 paths:
+  /news:
+    delete:
+      consumes:
+        - application/json
+      description: Delete all existing news
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/response.NewsResponse"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+      summary: Delete all news
+      tags:
+        - News
+    get:
+      description: Get all news with pagination
+      parameters:
+        - default: 5
+          description: Number of news per page
+          in: query
+          name: per_page
+          type: integer
+        - default: 1
+          description: Current page number
+          in: query
+          name: page
+          type: integer
+        - description: Filter news by title
+          in: query
+          name: filter
+          type: string
+        - description: Filter news by topic
+          in: query
+          name: topic
+          type: string
+        - description: Filter news by status
+          in: query
+          name: status
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: "#/definitions/response.Response"
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+      summary: Get all news
+      tags:
+        - News
+    post:
+      consumes:
+        - application/json
+      description: Create news
+      parameters:
+        - description: Create news
+          in: body
+          name: news
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.CreateNewsRequest"
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/response.NewsResponse"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+      summary: Create news
+      tags:
+        - News
+  /news/{uuid}:
+    get:
+      description: Get news by uuid
+      parameters:
+        - description: News UUID
+          in: path
+          name: uuid
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/response.NewsResponse"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+      summary: Get news by uuid
+      tags:
+        - News
+    put:
+      consumes:
+        - application/json
+      description: Update an existing news item by its UUID
+      parameters:
+        - description: News UUID
+          in: path
+          name: uuid
+          required: true
+          type: string
+        - description: News data
+          in: body
+          name: news
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.UpdateNewsRequest"
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/response.Response"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+      summary: Update news by UUID
+      tags:
+        - News
+  /news/{uuid}/status:
+    put:
+      consumes:
+        - application/json
+      description: Update news status
+      parameters:
+        - description: News UUID
+          in: path
+          name: uuid
+          required: true
+          type: string
+        - description: News data
+          in: body
+          name: news
+          required: true
+          schema:
+            $ref: "#/definitions/dtos.UpdateNewsStatus"
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: "#/definitions/response.NewsResponse"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/response.ErrorResponse"
+      summary: Update news status
+      tags:
+        - News
   /topic:
     post:
       consumes:
@@ -191,7 +493,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: "#/definitions/response.TopicResponse"
+              $ref: "#/definitions/response.Response"
             type: array
         "400":
           description: Bad Request
