@@ -1,8 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 SELECT 'up SQL query';
-CREATE TABLE IF NOT EXISTS topics (
-  id bigserial NOT NULL,
+CREATE TABLE topics (
+	id bigserial NOT NULL,
 	uuid text NULL DEFAULT gen_random_uuid(),
 	title varchar(255) NULL,
 	value varchar(255) NULL,
